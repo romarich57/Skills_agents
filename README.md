@@ -99,22 +99,67 @@ Sortie statique :
 
 ## Deploy
 
-### Option 1 (recommandee) : hebergement statique
+### Option 1 : Docker (app) + Nginx natif (host) pour `skills.romdev.cloud`
 
-Deployer directement le contenu de :
+Le projet contient :
 
-- `Apps/skills-catalog/dist/`
+- `Apps/skills-catalog/Dockerfile`
+- `Apps/skills-catalog/docker-compose.yml`
+- `Apps/skills-catalog/deploy/nginx/skills.romdev.cloud.bootstrap.conf`
+- `Apps/skills-catalog/deploy/nginx/skills.romdev.cloud.conf`
 
-Compatible Netlify, Vercel (mode static), Nginx, S3+CloudFront, etc.
-
-### Option 2 : build en CI/CD
-
-Inclure le projet `Apps/skills-catalog`, executer :
+#### 1. Lancer l'app avec Docker
 
 ```bash
-npm install
-npm run build
+cd Apps/skills-catalog
+docker compose up -d --build
 ```
+
+Le conteneur expose l'app uniquement en local host sur `127.0.0.1:4173`.
+
+#### 2. Bootstrap Nginx HTTP (pour generer le certificat)
+
+```bash
+sudo mkdir -p /var/www/certbot
+sudo cp Apps/skills-catalog/deploy/nginx/skills.romdev.cloud.bootstrap.conf /etc/nginx/sites-available/skills.romdev.cloud.conf
+sudo ln -sfn /etc/nginx/sites-available/skills.romdev.cloud.conf /etc/nginx/sites-enabled/skills.romdev.cloud.conf
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+#### 3. Generer le certificat SSL Let's Encrypt
+
+```bash
+sudo certbot certonly --webroot -w /var/www/certbot -d skills.romdev.cloud
+```
+
+#### 4. Activer la conf Nginx finale HTTPS
+
+```bash
+sudo cp Apps/skills-catalog/deploy/nginx/skills.romdev.cloud.conf /etc/nginx/sites-available/skills.romdev.cloud.conf
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Si besoin, adapte les chemins des certificats dans :
+
+- `/etc/nginx/sites-available/skills.romdev.cloud.conf`
+
+#### 5. Commandes utiles en prod
+
+```bash
+cd Apps/skills-catalog
+docker compose ps
+docker compose logs -f
+docker compose pull
+docker compose up -d --build
+```
+
+### Option 2 : hebergement statique classique
+
+Construire puis deployer le dossier :
+
+- `Apps/skills-catalog/dist/`
 
 ## Scripts npm
 
