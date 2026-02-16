@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply m-0 min-h-screen bg-[#f8fafc] text-slate-900 antialiased font-sans;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(142, 70%, 95%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(199, 89%, 95%, 1) 0px, transparent 50%);
+}
+
+#root {
+  @apply min-h-screen relative isolate;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
+}
+
+.card-surface {
+  @apply rounded-2xl border border-slate-200/60 bg-white/80 backdrop-blur-md shadow-sm transition-all duration-300;
+}
+
+.card-surface:hover {
+  @apply border-brand-200/50 shadow-premium-hover -translate-y-1;
+}
+
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-premium;
+}
+
+.nav-link-active {
+  @apply relative text-brand-600 font-semibold;
+}
+
+.nav-link-active::after {
+  content: '';
+  @apply absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-500;
+}
